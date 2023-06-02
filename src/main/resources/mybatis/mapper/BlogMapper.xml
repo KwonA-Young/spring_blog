@@ -54,9 +54,6 @@
     </update>
     
 
-
-
-
     <!-- 테스트를 위한 쿼리문들 -->
     <select id="createBlogTable">
         CREATE TABLE IF NOT EXISTS blog(
