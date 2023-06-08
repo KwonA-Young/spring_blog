@@ -24,7 +24,7 @@
             writer,
             blog_title as blogTitle,
             blog_content as blogContent,
-            published_at as pulishedAt,
+            published_at as publishedAt,
             updated_at as updatedAt,
             blog_count as blogCount
         FROM blog
