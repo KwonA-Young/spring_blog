@@ -109,9 +109,11 @@ public class BlogController {
     public String update(Blog blog) {
         // 받아온 blog 엔터티로 글 수정.
         blogService.update(blog);
-        // 리다이렉트는 가능하다면 해당 글 번호의 디테일 페이지로 넘어가게.
+        // 리다이렉트는 가능하다면 해당 글 번호의 디테일 페이지로 넘어가게 해주세요.
+        return "redirect:/blog/detail/" + blog.getBlogId();
+
         // 어려우면 list로 넘어가도록 해주세요.
-        return "redirect:/blog/list";
+        // return "redirect:/blog/list";
 
     }
 }

@@ -29,6 +29,7 @@
             </div>
         </div>
         <div class="col-6">
+            <input type="hidden" value="${blog.blogId}" name="blogId">
             <input type="submit" class="btn btn-primary" value="글쓰기">
         </div>
     </form>
