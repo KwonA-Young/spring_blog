@@ -74,7 +74,7 @@ public class RESTApiController {
 
     // Postman을 활용한 json 데이터 파라미터로 전송해 요청받기.
     @RequestMapping(value = "/bmi2", method = RequestMethod.GET)
-    public ResponseEntity<?> bmi2(@RequestBody BmiDTO bmi) {  // 파라미터를 joson으로만 받겠다.
+    public ResponseEntity<?> bmi2(@RequestBody BmiDTO bmi) {  // 파라미터를 JSON 으로만 받겠다.
 
         // 예외처리 들어갈 자리
         if (bmi.getHeight() == 0) {

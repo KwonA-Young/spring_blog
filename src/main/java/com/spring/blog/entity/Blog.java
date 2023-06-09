@@ -1,8 +1,10 @@
 package com.spring.blog.entity;
 
 import lombok.*;
+import org.springframework.cglib.core.Local;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 
 @Getter @Setter @ToString
 @AllArgsConstructor @NoArgsConstructor @Builder
@@ -13,8 +15,8 @@ public class Blog {
     private String writer;
     private String blogTitle;
     private String blogContent;
-    private Date publishedAt;
-    private Date updatedAt;
+    private LocalDateTime publishedAt;
+    private LocalDateTime updatedAt;
     private long blogCount;
     }
 
