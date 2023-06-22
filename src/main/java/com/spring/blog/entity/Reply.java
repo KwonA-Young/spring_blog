@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor @NoArgsConstructor
 
 public class Reply {
-    private Long replyId;
-    private Long blogId;
+    private long replyId;
+    private long blogId;
     private String replyWriter;
     private String replyContent;
     private LocalDateTime publishedAt;
