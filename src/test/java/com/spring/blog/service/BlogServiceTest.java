@@ -44,7 +44,7 @@ public class BlogServiceTest {
         String blogTitle = "2번제목";
 
         // when : DB 에서 2번 유저 얻어오기.
-        Blog blog = blogService.findByID(blogId);
+        Blog blog = blogService.findById(blogId);
 
         // then : 얻어온 유저의 번호는 blogId, 글쓴이는 writer 변수, 제목은 blogTitle 변수에 든 값일 것임.
         assertEquals(blogId, blog.getBlogId());
@@ -56,18 +56,16 @@ public class BlogServiceTest {
     @Test
     @Transactional
     // @Commit  // 트랜잭션 적용된 테스트의 결과를 커밋해서 DB 에 반영하도록 해준다.
-    public void deleteByIDTest() {
+    public void deleteByIdTest() {
         // given : 삭제할 번호 2번 지정.
         long blogId = 2;
-        String writer = "2번유저";
-        String blogTitle = "2번제목";
 
         // when
-        blogService.deleteByID(blogId);
+        blogService.deleteById(blogId);
 
         // then : 삭제되었다면, 총 개수는 2개, 2번으로 재 조회시 null
         assertEquals(2, blogService.findAll().size());
-        assertNull(blogService.findByID(blogId));
+        assertNull(blogService.findById(blogId));
     }
 
     // 저장로직에 대해서 테스트코드를 "빌더패턴을 써서" 작성해주세요.
@@ -100,11 +98,11 @@ public class BlogServiceTest {
     @Test
     @Transactional
     public void updateTest() {
-        // given : blogID 2번글의 제목을 "수정 제목"으로, 본문을 "수정 본문"으로 바꾸기 위한
+        // given : blogId 2번글의 제목을 "수정된 제목"으로, 본문을 "수정된 본문"으로 바꾸기 위한
         // 픽스처 선언 및 Blog 객체 선언.
         long blogId = 2;
-        String blogTitle = "수정 제목";
-        String blogContent = "수정 내용";
+        String blogTitle = "수정된 제목";
+        String blogContent = "수정된 본문";
         Blog blog = Blog.builder()
                 .blogId(blogId)
                 .blogTitle(blogTitle)
@@ -115,8 +113,8 @@ public class BlogServiceTest {
         blogService.update(blog);
 
         // then : blogId번 글을 가져와서, blogTitle, blogContent 가ㅏ 수정을 위한 픽스처와 동일하다고 단언.
-        assertEquals(blogId, blogService.findByID(blogId).getBlogId());
-        assertEquals(blogTitle, blogService.findByID(blogId).getBlogTitle());
-        assertEquals(blogContent, blogService.findByID(blogId).getBlogContent());
+        assertEquals(blogId, blogService.findById(blogId).getBlogId());
+        assertEquals(blogTitle, blogService.findById(blogId).getBlogTitle());
+        assertEquals(blogContent, blogService.findById(blogId).getBlogContent());
     }
 }

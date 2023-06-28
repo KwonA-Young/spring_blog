@@ -46,7 +46,7 @@ public class BlogController {
     // 뷰에 적재하는 코드를 작성해주세요.
     @RequestMapping("/detail/{blogId}")
     public String detail(@PathVariable Long blogId, Model model) {
-        Blog blog = blogService.findByID(blogId);
+        Blog blog = blogService.findById(blogId);
 
         if (blog == null) {
             try {
@@ -67,6 +67,7 @@ public class BlogController {
     // 폼에서 작성완료한 내용을 POST 방식으로 제출해 저장하도록 만들어준다.
     @RequestMapping(value = "/insert", method = RequestMethod.GET)
     public String insert() {
+        // WEB-INF/views/blog/blog-form,jsp
         return "blog/blog-form";
     }
 
@@ -85,7 +86,7 @@ public class BlogController {
     // 폼에 추가한 삭제버튼 코드와 컨트롤러에 작성한 delete 메서드
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public String delete(long blogId) {
-        blogService.deleteByID(blogId);
+        blogService.deleteById(blogId);
         return "redirect:/blog/list";
     }
 
@@ -98,7 +99,7 @@ public class BlogController {
     @RequestMapping(value = "/updateform", method = RequestMethod.POST)
     public String update(long blogId, Model model) {
         // blogId 를 이용해서 blog 객체를 받아옵니다.
-        Blog blog = blogService.findByID(blogId);
+        Blog blog = blogService.findById(blogId);
         // .jsp 로 보내기 위해 적재합니다.
         model.addAttribute("blog", blog);
         return "blog/blog-update-form";

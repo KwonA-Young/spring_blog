@@ -2,19 +2,23 @@ package com.spring.blog.service;
 
 import com.spring.blog.entity.Blog;
 import com.spring.blog.repository.BlogRepository;
+import com.spring.blog.repository.ReplyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service // 빈 컨테이너에 적재.
 public class BlogServiceImpl implements BlogService {
 
-    private final BlogRepository blogRepository;
+    BlogRepository blogRepository;
+    ReplyRepository replyRepository;
 
     @Autowired // 필드 주입보다 생성자 주입이 더 속도가 빠르다.
-    public BlogServiceImpl(BlogRepository blogRepository) {
+    public BlogServiceImpl(BlogRepository blogRepository, ReplyRepository replyRepository) {
         this.blogRepository = blogRepository;
+        this.replyRepository = replyRepository;
     }
 
     @Override
@@ -25,14 +29,16 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public Blog findByID(long blogId) {
+    public Blog findById(long blogId) {
         return blogRepository.findById(blogId);
     }
 
+    @Transactional // 둘 다 실행되던지, 둘 다 실행 안되던지.
     @Override
-    public void deleteByID(long blogId) {
+    public void deleteById (long blogId) {
+        replyRepository.deleteByBlogId(blogId);
         blogRepository.deleteById(blogId);
-    }
+   }
 
     @Override
     public void save(Blog blog) {

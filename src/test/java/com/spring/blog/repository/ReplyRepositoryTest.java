@@ -1,19 +1,16 @@
 package com.spring.blog.repository;
 
-import com.spring.blog.dto.ReplyFindByIdDTO;
-import com.spring.blog.dto.ReplyInsertDTO;
-import com.spring.blog.dto.ReplyUpdateDTO;
-import lombok.extern.log4j.Log4j2;
+import com.spring.blog.dto.ReplyResponseDTO;
+import com.spring.blog.dto.ReplyCreateRequestDTO;
+import com.spring.blog.dto.ReplyUpdateRequestDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.convert.DataSizeUnit;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.assertj.core.api.FactoryBasedNavigableListAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -31,7 +28,7 @@ public class ReplyRepositoryTest {
         long blogId = 2;
 
         // when : findAllByBlogId() 호출 및 결과 자료 저장.
-        List<ReplyFindByIdDTO> result = replyRepository.findAllByBlogId(blogId);
+        List<ReplyResponseDTO> result = replyRepository.findAllByBlogId(blogId);
         // then : 2번 글에 연동된 댓글이 4개 일 것이라고 단언.
         assertEquals(4, result.size());
     }
@@ -44,7 +41,7 @@ public class ReplyRepositoryTest {
         long replyId = 3;
 
         // when
-        ReplyFindByIdDTO result = replyRepository.findByReplyId(replyId);
+        ReplyResponseDTO result = replyRepository.findByReplyId(replyId);
 
         // then :
         assertEquals("스키", result.getReplyWriter());
@@ -74,7 +71,7 @@ public class ReplyRepositoryTest {
         long blogId = 1;
         String replyWriter = "도비의 스프링";
         String replyContent = "도비는 자유에요.";
-        ReplyInsertDTO replyInsertDTO = ReplyInsertDTO.builder()
+        ReplyCreateRequestDTO replyInsertDTO = ReplyCreateRequestDTO.builder()
                 .blogId(blogId)
                 .replyWriter(replyWriter)
                 .replyContent(replyContent)
@@ -85,9 +82,9 @@ public class ReplyRepositoryTest {
 
         // then : blogId번 글의 전체 댓글을 가지고 온 다음 마지막 인덱스 요소만 변수에 저장한 다음
         //        getter를 이용해 위에서 넣은 fixture와 일치하는지 체크.
-        List<ReplyFindByIdDTO> resultList = replyRepository.findAllByBlogId(blogId);
+        List<ReplyResponseDTO> resultList = replyRepository.findAllByBlogId(blogId);
         // resultList의 개수 - 1 이 마지막 인덱스 번호이므로, resultList에서 마지막 인덱스 요소만 가져오기
-        ReplyFindByIdDTO result = resultList.get(resultList.size() - 1);
+        ReplyResponseDTO result = resultList.get(resultList.size() - 1);
         // 단언문 작성
         assertEquals(replyWriter, result.getReplyWriter());
         assertEquals(replyContent, result.getReplyContent());
@@ -104,7 +101,7 @@ public class ReplyRepositoryTest {
         long replyId = 3;
         String replyWriter = "수정글쓴이";
         String replyContent = "수정한내용물!";
-        ReplyUpdateDTO replyUpdateDTO = ReplyUpdateDTO.builder()
+        ReplyUpdateRequestDTO replyUpdateDTO = ReplyUpdateRequestDTO.builder()
                 .replyId(replyId)
                 .replyWriter(replyWriter)
                 .replyContent(replyContent)
@@ -114,28 +111,25 @@ public class ReplyRepositoryTest {
         replyRepository.update(replyUpdateDTO);
 
         //then
-        ReplyFindByIdDTO result = replyRepository.findByReplyId(replyId);
+        ReplyResponseDTO result = replyRepository.findByReplyId(replyId);
         assertEquals(replyWriter, result.getReplyWriter());
         assertEquals(replyContent, result.getReplyContent());
         assertTrue(result.getUpdatedAt().isAfter(result.getPublishedAt()));
-
     }
 
+    @Test @Transactional
+    @DisplayName("blogId가 2인 글을 삭제하면, 삭제한 글의 전체 댓글 조회시 자료 길이는 null일 것이다.")
+    public void deleteByBlogIdTest() {
+        // given : fixture 작성.
+        long blogId = 2;
 
+        // when : 삭제 수행.
+        replyRepository.deleteByBlogId(blogId);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+        // then : blogId 번 글 전체 댓글을 얻어와서 길이가 0인지 확인.
+        List<ReplyResponseDTO> resultList = replyRepository.findAllByBlogId(blogId);
+        assertEquals(0, resultList.size());
+    }
 
 
 }

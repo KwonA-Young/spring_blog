@@ -1,6 +1,7 @@
 package com.spring.blog.service;
 
 import com.spring.blog.entity.Blog;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -10,11 +11,11 @@ public interface BlogService {
     // 전체 블로그 포스팅을 조회하는 findAll() 선언.
     List<Blog> findAll();
 
-    // 단일 포스팅을 조회하는 메서드 findById()를 선언해주세요.
-    Blog findByID(long blogId);
+    // 단일 포스팅을 조회하는 findById() 메서드를 정의해주세요.
+    Blog findById(long blogId);
 
-    // 단일 포스팅을 삭제하는 메서드 deleteById()를 선언해주세요.
-    void deleteByID(long blogId);
+    // 단일 포스팅을 삭제하는 메서드 deleteById() 를 정의해주세요.
+    void deleteById(long blogId);
 
     // 단일 포스팅을 게시하는 메서드 save()를 선언해주세요.
     void save(Blog blog);

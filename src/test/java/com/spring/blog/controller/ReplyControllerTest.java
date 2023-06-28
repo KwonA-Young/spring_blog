@@ -1,11 +1,13 @@
 package com.spring.blog.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.spring.blog.dto.ReplyInsertDTO;
+import com.spring.blog.dto.ReplyResponseDTO;
+import com.spring.blog.dto.ReplyCreateRequestDTO;
+import com.spring.blog.dto.ReplyUpdateRequestDTO;
+import com.spring.blog.repository.ReplyRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.internal.SuppressSignatureCheck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,12 +16,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -35,6 +37,13 @@ class ReplyControllerTest {
 
     @Autowired // 데이터 직렬화에 사용하는 객체
     private ObjectMapper objectMapper;
+
+    // 임시적으로 ReplyRepository 생성.
+    // 레포지토리 레이어의 메서드는 쿼리문을 하나만 호출하는 것이 보장되지만
+    // 서비스 레이어의 메서드는 추후에 쿼리문을 두 개 이상 호출할 수도 있고,
+    // 그런 변경이 생겼을 때 테스트코드도 같이 수정해야 할 가능성이 생긴다.
+    @Autowired
+    private ReplyRepository replyRepository;
 
     // 컨트롤러를 테스트 해야하는데 컨트롤러는 서버에 url만 입력하면 동작하므로 컨트롤러를 따로 생성하지는 않는다.
     // 각 테스트 전에 설정하기.
@@ -55,7 +64,7 @@ class ReplyControllerTest {
         // get() 메서드의 경우 작성 후 alt + enter 눌러서 mockmvc 관련 요소로 import
         // import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-        // fetch(url, {method:'get'}).then(res => res.json()); 에 대응하는 코드
+                                     // fetch(url, {method:'get'}).then(res => res.json()); 에 대응하는 코드
         final ResultActions result = mockMvc.perform(get(url)
                 .accept(MediaType.APPLICATION_JSON));
 
@@ -97,7 +106,7 @@ class ReplyControllerTest {
         long blogId = 1;
         String replyWriter = "또사라짐";
         String replyContent = "가기싫다";
-        ReplyInsertDTO replyInsertDTO = new ReplyInsertDTO(blogId, replyWriter, replyContent);
+        ReplyCreateRequestDTO replyInsertDTO = new ReplyCreateRequestDTO(blogId, replyWriter, replyContent);
         String url = "/reply";
         String url2 = "/reply/1/all";
 
@@ -120,4 +129,56 @@ class ReplyControllerTest {
                 .andExpect(jsonPath("$[0].replyWriter").value(replyWriter))
                 .andExpect(jsonPath("$[0].replyContent").value(replyContent));
     }
+
+    @Test @Transactional
+    @DisplayName("댓글번호 3번을 삭제할 경우, 글번호 2번의 댓글수는 3개, 그리고 단일댓글 조회시 null.")
+    public void deleteReplyTest() throws Exception{
+        // given : 픽스처 세팅, 요청주소까지.
+        long replyId = 3;
+        long blogId = 2;
+        String url = "http://localhost:8080/reply/3";
+
+        // when : 삭제 수행.
+        // .accept() 는 리턴 데이터가 있는 경우에 해당 데이터를 어떤 형식으로 받아올지 기술.
+        mockMvc.perform(delete(url)
+                .accept(MediaType.TEXT_PLAIN));
+
+        // then : repository 를 이용해 전체 데이터를 가져온 후, 개수 비교 및 삭제한 3번 댓글은 null 이 리턴되는지 확인.
+        List<ReplyResponseDTO> resultList = replyRepository.findAllByBlogId(blogId);
+        assertEquals(4, resultList.size());
+        ReplyResponseDTO result = replyRepository.findByReplyId(replyId);
+        assertNull(result);
+    }
+    @Test @Transactional
+    @DisplayName("댓글번호 4번의 replyWriter를 쵸쵸리, replyContent를 쵸리뭐해 로 바꾼 뒤 조회시 픽스처 일치")
+    public void updateReplyTest() throws Exception {
+        // given : 픽스처 생성 및 ReplyUpdateRequestDTO 객체 생성 후 픽스처 주입 + json으로 데이터 직렬화.
+        String replyWriter = "쵸쵸리";
+        String replyContent = "쵸리뭐해";
+        ReplyUpdateRequestDTO replyUpdateRequestDTO = ReplyUpdateRequestDTO.builder()
+                .replyWriter(replyWriter)
+                .replyContent(replyContent)
+                .build();
+
+        String url = "/reply/4"; // 4번 댓글에 대한 수정 요청 넣기.
+
+        // 데이터 json으로 직렬화
+        final String requestBody = objectMapper.writeValueAsString(replyUpdateRequestDTO);
+
+        // when : 직렬화된 데이터를 이용해 patch 방식으로 세팅된 요청 주소에 요청 넣기.
+        mockMvc.perform(patch(url)
+                .contentType(MediaType.APPLICATION_JSON)   // 보내는 데이터는 json.
+                .content(requestBody)); // 직렬화된 데이터 전송.
+
+        // then : 위에서 수정한 4번 댓글에 대한 정보를 가져와서 픽스처와 비교.
+        final ResultActions result = mockMvc.perform(get(url)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // 얻어온 4번 코드의 요청 결과는 200이고, replyWriter, replyContent 는 픽스처와 일치한다.
+        result
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.replyWriter").value(replyWriter))
+                .andExpect(jsonPath("$.replyContent").value(replyContent));
+    }
 }
+
