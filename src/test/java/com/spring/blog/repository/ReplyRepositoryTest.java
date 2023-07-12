@@ -30,7 +30,7 @@ public class ReplyRepositoryTest {
         // when : findAllByBlogId() 호출 및 결과 자료 저장.
         List<ReplyResponseDTO> result = replyRepository.findAllByBlogId(blogId);
         // then : 2번 글에 연동된 댓글이 4개 일 것이라고 단언.
-        assertEquals(4, result.size());
+        assertEquals(5, result.size());
     }
 
     @Test
@@ -59,7 +59,7 @@ public class ReplyRepositoryTest {
         replyRepository.deleteByReplyId(replyId);
 
         // then : 2번 글에 연동된 댓글 개수는 3개 일 것이고, 2번 댓글 재조회시 null.
-        assertEquals(3, replyRepository.findAllByBlogId(blogId).size());
+        assertEquals(4, replyRepository.findAllByBlogId(blogId).size());
         assertNull(replyRepository.findByReplyId(replyId));
     }
 

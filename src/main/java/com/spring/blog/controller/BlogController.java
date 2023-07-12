@@ -67,7 +67,7 @@ public class BlogController {
     // 폼에서 작성완료한 내용을 POST 방식으로 제출해 저장하도록 만들어준다.
     @RequestMapping(value = "/insert", method = RequestMethod.GET)
     public String insert() {
-        // WEB-INF/views/blog/blog-form,jsp
+        // WEB-INF/views/blog/blog-form,jsp/
         return "blog/blog-form";
     }
 

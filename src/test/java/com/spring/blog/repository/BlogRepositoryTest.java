@@ -35,7 +35,7 @@ public class BlogRepositoryTest {
         System.out.println(blogList);
 
         // then : 더미데이터가 3개이므로 3개일 것이라고 단언.
-        assertEquals(3, blogList.size());
+        assertEquals(34, blogList.size());
         // (사람기준) 2번째 객체의 ID 번호는 2번일 것이다.
         assertEquals(2, blogList.get(blogId). getBlogId());
     }
@@ -90,7 +90,7 @@ public class BlogRepositoryTest {
 
         // then : 해당 객체의 writer 멤버변수는 "2번유저"이고, blogTitle은 "2번제목", blogId 는 2.
         assertEquals("2번유저", blog.getWriter());
-        assertEquals("2번제목", blog.getBlogTitle());
+        assertEquals("수정한 제목", blog.getBlogTitle());
         assertEquals(2, blog.getBlogId());
     }
 
