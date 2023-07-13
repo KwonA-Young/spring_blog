@@ -12,7 +12,6 @@ import java.util.List;
 public class ReplyServiceImpl implements ReplyService {
 
     ReplyRepository replyRepository;
-
     ReplyJPARepository replyJPARepository;
 
     @Autowired

@@ -1,15 +1,13 @@
 package com.spring.blog.service;
 
 import com.spring.blog.entity.Blog;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 public interface BlogService {
 
     // 비즈니스 로직을 담당할 메서드를 "정의"만 하면 됩니다.
     // 전체 블로그 포스팅을 조회하는 findAll() 선언.
-    List<Blog> findAll();
+    Page<Blog> findAll(Long pageNum);
 
     // 단일 포스팅을 조회하는 findById() 메서드를 정의해주세요.
     Blog findById(long blogId);

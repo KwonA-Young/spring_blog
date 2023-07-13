@@ -22,7 +22,7 @@ public class ReplyController {
     ReplyService replyService;
 
     @Autowired
-    public ReplyController(ReplyService replyService){
+    public ReplyController(ReplyService replyService) {
         this.replyService = replyService;
     }
 
@@ -34,7 +34,7 @@ public class ReplyController {
     // rest서버는 응답시 응답코드와 응답객체를 넘기기 때문에 ResponseEntity<자료형>
     // 을 리턴합니다.
     public ResponseEntity<List<Reply>> findAllReplies(
-            @PathVariable long blogId){
+            @PathVariable long blogId) {
         // 서비스에서 리플 목록을 들고옵니다.
         List<Reply> replies = replyService.findAllByBlogId(blogId);
 
@@ -46,11 +46,11 @@ public class ReplyController {
     // replyId를 주소에 포함시켜서 요청하면 해당 번호 댓글 정보를 json으로 리턴하는 메서드
     // 예시) /reply/5 -> replyId 변수에 5가 대입되도록 주소 설정 및 메서드 선언
     @RequestMapping(value = "/{replyId}", method = RequestMethod.GET)
-    public ResponseEntity<?> findByReplyId(@PathVariable long replyId){
+    public ResponseEntity<?> findByReplyId(@PathVariable long replyId) {
 
         // 서비스에서 특정 번호 리플을 가져옵니다.
         Reply reply = replyService.findByReplyId(replyId);
-        if(reply == null) {
+        if (reply == null) {
             try {
                 throw new NotFoundReplyByReplyIdException("없는 리플 번호를 조회했습니다");
             } catch (NotFoundReplyByReplyIdException e) {
@@ -70,22 +70,22 @@ public class ReplyController {
     public ResponseEntity<String> insertReply(@RequestBody Reply reply) {
         replyService.save(reply);
         return ResponseEntity
-                .ok("댓글 등록이 잘 되었습니다.");
+                .ok("댓글이 등록되었습니다.");
     }
 
     // delete 방식으로 /reply/{댓글번호} 주소로 요청이 들어왔을때 실행되는 메서드 deleteReply()를 작성해주세요.
     @RequestMapping(value = {"/{replyId}", "/{replyId}/"}, method = RequestMethod.DELETE)
-    public ResponseEntity<String> deleteReply(@PathVariable long replyId){
+    public ResponseEntity<String> deleteReply(@PathVariable long replyId) {
         replyService.deleteByReplyId(replyId);
 
-        return ResponseEntity.ok("삭제완료되었습니다");
+        return ResponseEntity.ok("댓글이 삭제되었습니다.");
     }
 
     // 수정로직은 put, patch 메서드로 /reply/댓글번호 주소로
     // ReplyUpdateRequestDTO를 requestBody로 받아 요청처리를 하게 만들어주세요.
     @RequestMapping(value = "/{replyId}", method = {RequestMethod.PUT, RequestMethod.PATCH})
     public ResponseEntity<String> updateReply(@PathVariable long replyId,
-                                              @RequestBody Reply reply){
+                                              @RequestBody Reply reply) {
         // json 데이터에 replyId를 포함하는 대신 url에 포함시켰으므로 requestBody에 추가해줘야함.
         System.out.println("replyId 주입 전 : " + reply);
         reply.setReplyId(replyId);
@@ -94,7 +94,6 @@ public class ReplyController {
 
         return ResponseEntity.ok("수정이 완료되었습니다.");
     }
-
 
 
 }
